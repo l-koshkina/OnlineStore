@@ -3,6 +3,8 @@ import {FavoriteService} from "../../../shared/services/favorite.service";
 import {FavoriteType} from "../../../../types/favorite.type";
 import {DefaultResponseType} from "../../../../types/default-response.type";
 import {environment} from "../../../../environments/environment";
+import {CartType} from "../../../../types/cart.type";
+import {CartService} from "../../../shared/services/cart.service";
 
 @Component({
   selector: 'app-favorite',
@@ -12,9 +14,12 @@ import {environment} from "../../../../environments/environment";
 export class FavoriteComponent implements OnInit {
 
   products: FavoriteType[] = [];
+  cart: CartType | null = null;
   serverStaticPath = environment.serverStaticPath;
+  count: number = 1;
 
-  constructor(private favoriteService: FavoriteService) {
+  constructor(private favoriteService: FavoriteService,
+              private cartService: CartService,) {
   }
 
   ngOnInit(): void {
@@ -26,6 +31,32 @@ export class FavoriteComponent implements OnInit {
         }
 
         this.products = data as FavoriteType[];
+
+        this.cartService.getCart()
+          .subscribe((cartData: CartType | DefaultResponseType) => {
+            if ((cartData as DefaultResponseType). error !== undefined) {
+              throw new Error((cartData as DefaultResponseType).message);
+            }
+
+            this.cart = cartData as CartType;
+
+            if (this.cart && this.cart.items.length > 0) {
+              this.products = this.products.map(product => {
+                product.countInCart = 0;
+                if (this.cart) {
+                  const productInCart = this.cart.items.find(item => item.product.id === product.id)
+                  if (productInCart) {
+                    product.countInCart = productInCart.quantity;
+                  }
+                }
+
+                return product;
+              });
+            }
+
+            console.log(this.products);
+
+          })
       })
   }
 
@@ -39,6 +70,31 @@ export class FavoriteComponent implements OnInit {
 
           this.products = this.products.filter(item => item.id !== id);
         })
+  }
+
+  updateCount(id: string, quantity: number) {
+    this.cartService.updateCart(id, quantity)
+      .subscribe((data: CartType | DefaultResponseType) => {
+        if ((data as DefaultResponseType).error !== undefined) {
+          throw new Error((data as DefaultResponseType).message);
+        }
+
+        this.cart = data as CartType;
+
+        if (this.cart && this.cart.items.length > 0) {
+          this.products = this.products.map(product => {
+            product.countInCart = 0;
+            if (this.cart) {
+              const productInCart = this.cart.items.find(item => item.product.id === product.id)
+              if (productInCart) {
+                product.countInCart = productInCart.quantity;
+              }
+            }
+
+            return product;
+          });
+        }
+      })
   }
 
 }

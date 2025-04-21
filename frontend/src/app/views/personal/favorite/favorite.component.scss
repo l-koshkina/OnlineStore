@@ -35,7 +35,7 @@
         border-top: 1px solid #E7F1E8;
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: start;
 
         &:first-child {
           margin-top: 0;
@@ -55,26 +55,43 @@
           margin-left: 24px;
           font-size: 20px;
           color: $gray-text-color;
-          width: 567px;
+          width: 547px;
           margin-right: 20px;
         }
 
         .favorite-product-price {
           width: 100px;
-          margin-right: 193px;
+          margin-right: 83px;
           font-family: Montserrat, sans-serif;
           font-weight: 600;
           font-size: 22px;
           color: $gray-text-color;
         }
 
-        .favorite-product-action button {
-          width: 160px;
+
+
+        .favorite-product-action {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          button {
+            width: 160px;
+            margin-right: 137px;
+
+            &.button-in-cart {
+              margin-right: 40px;
+
+            }
+          }
         }
 
+
+
         .favorite-product-remove {
-          margin-left: 60px;
+          margin-left: 40px;
           cursor: pointer;
+          justify-self: end;
         }
       }
     }

@@ -22,6 +22,8 @@ export class ProductCardComponent implements OnInit {
   @Input() countInCart: number | undefined = 0;
   serverStaticPath = environment.serverStaticPath;
   count: number = 1;
+  isLogged: boolean = false;
+
 
   // isInCart: boolean = false;
 
@@ -30,6 +32,7 @@ export class ProductCardComponent implements OnInit {
               private authService: AuthService,
               private _snackBar: MatSnackBar,
               private router: Router,) {
+    this.isLogged = this.authService.getIsLoggedIn();
   }
 
   ngOnInit(): void {
