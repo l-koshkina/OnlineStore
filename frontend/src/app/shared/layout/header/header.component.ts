@@ -54,6 +54,24 @@ export class HeaderComponent implements OnInit {
 
     this.authService.isLogged$.subscribe((isLogged: boolean) => {
       this.isLogged = isLogged;
+      if (this.isLogged) {
+        this.cartService.getCartCount()
+          .subscribe((data: { count: number } | DefaultResponseType) => {
+            if ((data as DefaultResponseType).error !== undefined) {
+              throw new Error((data as DefaultResponseType).message);
+            }
+
+            this.count = (data as { count: number }).count;
+
+          })
+
+        this.cartService.count$
+          .subscribe(count => {
+            this.count = count;
+          })
+      } else {
+        this.count = 0;
+      }
     })
 
     this.cartService.getCartCount()
@@ -68,8 +86,11 @@ export class HeaderComponent implements OnInit {
 
     this.cartService.count$
       .subscribe(count => {
-        this.count = count
+        this.count = count;
       })
+
+
+
   }
 
   logout(): void {
@@ -89,6 +110,7 @@ export class HeaderComponent implements OnInit {
     this.authService.userId = null;
     this._snackBar.open('Вы вышли из системы');
     this.router.navigate(['/']);
+    this.count = 0;
   }
 
   // changeSearchValue(newValue: string) {

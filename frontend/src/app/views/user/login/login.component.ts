@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import {AuthService} from "../../../core/auth/auth.service";
@@ -6,6 +6,7 @@ import {DefaultResponseType} from "../../../../types/default-response.type";
 import {LoginResponseType} from "../../../../types/login-response.type";
 import {HttpErrorResponse} from "@angular/common/http";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {CartService} from "../../../shared/services/cart.service";
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 })
 export class LoginComponent implements OnInit {
 
-
+  count: number = 0;
   loginForm = this.fb.group({
     email: ['', [Validators.email, Validators.required]],
     password: ['', [Validators.required]],
@@ -24,7 +25,9 @@ export class LoginComponent implements OnInit {
   constructor(private fb: FormBuilder,
               private authService: AuthService,
               private _snackBar: MatSnackBar,
-              private router: Router) { }
+              private cartService: CartService,
+              private router: Router) {
+  }
 
   ngOnInit(): void {
   }

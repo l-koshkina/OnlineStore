@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {ProductService} from "../../../shared/services/product.service";
 import {ProductType} from "../../../../types/product.type";
 import {CategoryService} from "../../../shared/services/category.service";
@@ -24,7 +24,7 @@ export class CatalogComponent implements OnInit {
 
   products: ProductType[] = [];
   categoriesWithTypes: CategoryWithTypeType[] = [];
-  activeParams: ActiveParamsType = {types: []};
+  activeParams: ActiveParamsType = {types: [], page: 1};
   appliedFilters: AppliedFilterType[] = [];
   sortingOpen = false;
   sortingOptions: { name: string, value: string }[] = [
@@ -48,6 +48,7 @@ export class CatalogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
     this.cartService.getCart()
       .subscribe((data: CartType | DefaultResponseType) => {
         if ((data as DefaultResponseType). error !== undefined) {
@@ -184,6 +185,14 @@ export class CatalogComponent implements OnInit {
 
   toggleSorting() {
     this.sortingOpen = !this.sortingOpen;
+
+  }
+
+  @HostListener('document:click', ['$event'])
+  click(event: Event): void {
+    if (this.sortingOpen && (event.target as HTMLElement).className.indexOf('catalog-sorting') === -1) {
+      this.sortingOpen = false;
+    }
   }
 
   sort(value: string) {
@@ -210,6 +219,7 @@ export class CatalogComponent implements OnInit {
   }
 
   openNextPage() {
+
     if (this.activeParams.page && this.activeParams.page < this.pages.length) {
       this.activeParams.page++;
       this.router.navigate(['/catalog'], {
